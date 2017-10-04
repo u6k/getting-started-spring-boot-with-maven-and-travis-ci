@@ -90,8 +90,90 @@ Gistでは、次のテンプレートが人気のようです。
         - DBを使用する場合。
         - しばらくはDerbyなどEmbed DBで良いです。
 
-- TODO 各ファイルの書式を調整
-- TODO 不要ファイルを削除
+ダウンロードしたプロジェクトは展開して、Gitコミットします。次に、プロジェクトの内容を調整します。
+
+- 全体的に
+    - インデントがタブ文字なので、スペース文字に変換
+    - 改行コードがLFなので、CRLFに変換
+
+- `build.gradle`
+
+`sourceCompatibility`は設定されていますが`targetCompatibility`が未設定なので、設定します。
+
+```
+targetCompatibility = 1.8
+```
+
+Gradleのビルド結果は`build/`に出力されますが、Eclipseはデフォルトで`bin/`に出力します。`build/`に合わせたほうが管理が楽なので、設定を追加します。
+
+```
+eclipse {
+    classpath {
+        defaultOutputDir = file('build/eclipse-classes')
+    }
+}
+```
+
+- パッケージ
+
+Artifactの設定によってはパッケージが不適切になっていることがあるので、修正します。
+
+`resources/static/`、`resources/templates/`が生成されますが、現時点では使わないので、削除します。
+
+- javaファイル
+
+Artifact名でメイン・クラスが生成されますが、個人的な慣習のため`Main.java`に変更します。あわせて、テスト・クラスも生成されているので、`MainTest.java`に変更します。
+
+これらのファイルを開き、フォーマット、インポートの整理を行います。
+
+テスト・クラスには空のテスト・メソッドが定義されていますが、ビルドのために残しておきます。
+
+- `src/main/resources/application.properties`
+
+DBを使用する場合、DB接続設定を追加します。次の設定は、Apache Derbyの設定例です。
+
+```
+spring.datasource.driverClassName=org.apache.derby.jdbc.EmbeddedDriver
+spring.datasource.url=jdbc:derby:${APP_DB_PATH:build/db/};create=true
+spring.datasource.username=root
+spring.datasource.password=root
+spring.jpa.hibernate.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.DerbyDialect
+```
+
+JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`build/db/`を設定しています。これは、開発時は`build/db/`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
+
+ログ出力設定を追加します。筆者は、「ライブラリはともかくアプリケーションはできるだけログ出力したほうが良い」と考えているため、次のように設定します。rootではないほうの設定は、アプリケーションのパッケージ名を設定していることに注意してください。
+
+```
+logging.level.root=INFO
+logging.level.me.u6k=DEBUG
+```
+
+### Eclipseプロジェクトを作成、動作確認
+
+Spring Bootプロジェクトとして最低限の体裁が整ったので、Eclipseプロジェクトを生成してみます。
+
+```
+$ ./gradlew eclipse
+```
+
+生成したEclipseプロジェクトをインポートしてみて、正常にインポートできることを確認します。
+
+次に、実行してみます。
+
+```
+$ ./gradlew bootRun
+```
+
+起動したら、 http://localhost:8080/health にアクセスして、次のように出力されることを確認します。
+
+```
+{"status":"UP"}
+```
+
+また、`build/db/`にDBデータが出力されることを確認します。
 
 ### Dockerfileを作成
 
