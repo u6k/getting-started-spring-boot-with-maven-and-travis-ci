@@ -37,14 +37,24 @@ Server:
  Experimental: false
 ```
 
-## Step
+## Steps
+
+Spring Boot with Gradleプロジェクトを開始する手順を説明します。
 
 ### やりたいことをREADMEに書く
 
-- TODO Featuresに欲しい機能を列挙する。
-- Readme Driven Development http://tom.preston-werner.com/2010/08/23/readme-driven-development.html
-- Readme駆動開発を和訳してみた - Qiita https://qiita.com/syossan27/items/38e2f4b7f0dc74207dc9
-- わかりやすい README 駆動開発 - Qiita https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b
+まず、やりたいこと、欲しい機能をREADMEに書きます。ここで多く書きすぎた場合は、別プロジェクトに切り出せばよいだけなので、頭の中を空っぽにする勢いで書き出します。次の記事を参考にすると良いです。
+
+- [Readme Driven Development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html)
+- [Readme駆動開発を和訳してみた - Qiita](https://qiita.com/syossan27/items/38e2f4b7f0dc74207dc9)
+
+筆者は、次のREADMEテンプレートを好んで使っています。
+
+- [わかりやすい README 駆動開発 - Qiita](https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b)
+
+Gistでは、次のテンプレートが人気のようです。
+
+- [A template to make good README.md](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 
 ### Spring Initializrでプロジェクトを作成、ダウンロード
 
