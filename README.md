@@ -73,9 +73,23 @@ Gistでは、次のテンプレートが人気のようです。
 
 ### Spring Initializrでプロジェクトを作成、ダウンロード
 
-[Spring Initializr](https://start.spring.io/)でプロジェクトを作成、ダウンロードします。
+[Spring Initializr](https://start.spring.io/)でプロジェクトを作成、ダウンロードします。設定は、次のように行います。
 
-- TODO Gradleプロジェクト
+- Gradle Project
+- Java
+- Spring Boot Version = 最新の安定版
+- Project Metadata
+    - Group = 自分が所有するドメイン名の逆
+        - ドメインを所有していない場合、Artifactと同じでも良いです。
+    - Artifact = GitHubリポジトリ名
+- Dependencies
+    - Web, Thymeleaf, Actuator
+        - Webアプリケーションの場合。
+        - REST APIのみの場合、Thymeleafは不必要です。
+    - JPA, Apache Derby
+        - DBを使用する場合。
+        - しばらくはDerbyなどEmbed DBで良いです。
+
 - TODO 各ファイルの書式を調整
 - TODO 不要ファイルを削除
 
