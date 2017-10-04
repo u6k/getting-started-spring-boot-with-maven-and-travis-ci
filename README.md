@@ -83,6 +83,7 @@ Gistでは、次のテンプレートが人気のようです。
         - ドメインを所有していない場合、Artifactと同じでも良いです。
     - Artifact = GitHubリポジトリ名
 - Dependencies
+    - DevTools
     - Web, Thymeleaf, Actuator
         - Webアプリケーションの場合。
         - REST APIのみの場合、Thymeleafは不必要です。
@@ -177,8 +178,88 @@ $ ./gradlew bootRun
 
 ### Dockerfileを作成
 
-- TODO 開発用Dockerfile
-- TODO 実行用Dockerfile
+Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードを基に起動しますが、実行用はビルドしたjarファイルを基に起動します。
+
+- `Dockerfile-dev`
+
+```
+FROM openjdk:8-alpine
+LABEL maintainer="u6k.apps@gmail.com"
+
+VOLUME /var/my-app
+WORKDIR /var/my-app
+
+CMD ["./gradlew", "bootRun"]
+```
+
+- `Dockerfile`
+
+```
+FROM openjdk:8-alpine AS dev
+
+COPY . /var/my-app
+WORKDIR /var/my-app
+RUN ./gradlew build
+
+FROM openjdk:8-alpine
+LABEL maintainer="u6k.apps@gmail.com"
+
+COPY --from=dev /var/my-app/build/libs/my-app-x.x.x.jar /opt/my-app.jar
+
+ENV APP_DB_PATH /var/my-app/db/
+VOLUME /var/my-app/db/
+
+CMD ["java", "-jar", "/opt/my-app.jar"]
+```
+
+ファイル中の`my-app`は、アプリケーション名に変更します。`Dockerfile`の`x.x.x`は、バージョン番号に変更します。DBを使用する場合、出力先としての`/var/my-app/db/`と`APP_DB_PATH`環境変数を定義しますが、DBを使用しない場合は不要です。
+
+__TODO:__ バージョン番号は`build.gradle`の1箇所で管理したいのですが、現時点ではしかたなく`Dockerfile`にも記述してしまっています。将来的に、これは解消したいと考えています。
+
+Dockerfileを作成したら、動作確認を行います。
+
+開発用Dockerイメージを構築します。
+
+```
+$ docker build -t my-app-dev -f Dockerfile-dev .
+```
+
+開発用Dockerイメージを起動します。
+
+```
+$ docker run \
+    -it \
+    -p 8080:8080 \
+    -v ${PWD}:/var/my-app \
+    my-app-dev sh
+```
+
+アプリケーションを起動して、 http://localhost:8080/health にアクセスできることを確認します。
+
+```
+$ ./gradlew bootRun
+```
+
+テストを実行できることを確認します。
+
+```
+$ ./gradlew test
+```
+
+実行用Dockerイメージを構築します。
+
+```
+$ docker build -t u6kapps/my-app .
+```
+
+実行用Dockerイメージを起動して、 http://localhost:8080/health にアクセスできることを確認します。
+
+```
+$ docker run \
+    -p 8080:8080 \
+    -v ${DOCKER_VOLUMES}/my-app:/var/my-app \
+    u6kapps/my-app
+```
 
 ### CircleCIビルドを設定
 
