@@ -1,7 +1,6 @@
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
 
-VOLUME /root/.gradle
 VOLUME /var/sample-spring-boot-with-gradle
 WORKDIR /var/sample-spring-boot-with-gradle
 

@@ -87,9 +87,9 @@ Gistでは、次のテンプレートが人気のようです。
     - Web, Thymeleaf, Actuator
         - Webアプリケーションの場合。
         - REST APIのみの場合、Thymeleafは不必要です。
-    - JPA, Apache Derby
+    - JPA, H2
         - DBを使用する場合。
-        - しばらくはDerbyなどEmbed DBで良いです。
+        - しばらくはH2 DatabaseなどEmbedded DBで良いです。
 
 ダウンロードしたプロジェクトは展開して、Gitコミットします。次に、プロジェクトの内容を調整します。
 
@@ -134,16 +134,16 @@ Artifact名でメイン・クラスが生成されますが、個人的な慣習
 DBを使用する場合、DB接続設定を追加します。次の設定は、Apache Derbyの設定例です。
 
 ```
-spring.datasource.driverClassName=org.apache.derby.jdbc.EmbeddedDriver
-spring.datasource.url=jdbc:derby:${APP_DB_PATH:build/db/};create=true
-spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:${APP_DB_PATH:./build/db/my-app}
+spring.datasource.username=sa
+spring.datasource.password=sa
 spring.jpa.hibernate.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.DerbyDialect
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 ```
 
-JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`build/db/`を設定しています。これは、開発時は`build/db/`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
+JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./build/db/my-app`を設定しています。これは、開発時は`./build/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
 
 ログ出力設定を追加します。筆者は、「ライブラリはともかくアプリケーションはできるだけログ出力したほうが良い」と考えているため、次のように設定します。rootではないほうの設定は、アプリケーションのパッケージ名を設定していることに注意してください。
 
@@ -174,11 +174,11 @@ $ ./gradlew bootRun
 {"status":"UP"}
 ```
 
-また、`build/db/`にDBデータが出力されることを確認します。
+また、`./build/db/my-app`にDBデータが出力されることを確認します。
 
 ### Dockerfileを作成
 
-Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードを基に起動しますが、実行用はビルドしたjarファイルを基に起動します。
+Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。
 
 - `Dockerfile-dev`
 
@@ -189,7 +189,7 @@ LABEL maintainer="u6k.apps@gmail.com"
 VOLUME /var/my-app
 WORKDIR /var/my-app
 
-CMD ["./gradlew", "bootRun"]
+CMD ["sh"]
 ```
 
 - `Dockerfile`
@@ -206,13 +206,13 @@ LABEL maintainer="u6k.apps@gmail.com"
 
 COPY --from=dev /var/my-app/build/libs/my-app-x.x.x.jar /opt/my-app.jar
 
-ENV APP_DB_PATH /var/my-app/db/
-VOLUME /var/my-app/db/
+ENV APP_DB_PATH /var/my-app/db/my-app
+VOLUME /var/my-app
 
 CMD ["java", "-jar", "/opt/my-app.jar"]
 ```
 
-ファイル中の`my-app`は、アプリケーション名に変更します。`Dockerfile`の`x.x.x`は、バージョン番号に変更します。DBを使用する場合、出力先としての`/var/my-app/db/`と`APP_DB_PATH`環境変数を定義しますが、DBを使用しない場合は不要です。
+ファイル中の`my-app`は、アプリケーション名に変更します。`Dockerfile`の`x.x.x`は、バージョン番号に変更します。DBを使用する場合、出力先としての`/var/my-app`と`APP_DB_PATH`環境変数を定義しますが、DBを使用しない場合は不要です。
 
 __TODO:__ バージョン番号は`build.gradle`の1箇所で管理したいのですが、現時点ではしかたなく`Dockerfile`にも記述してしまっています。将来的に、これは解消したいと考えています。
 
