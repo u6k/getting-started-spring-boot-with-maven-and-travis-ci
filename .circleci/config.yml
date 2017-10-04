@@ -1,0 +1,74 @@
+version: 2
+jobs:
+    unittest:
+        docker:
+            - image: openjdk:8-alpine
+        steps:
+            - checkout
+            - run:
+                name: Test application
+                command: ./gradlew test
+            - run:
+                name: Save test result
+                command: |
+                    mkdir -p ~/xunit/
+                    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/xunit/ \;
+                when: always
+            - store_test_results:
+                path: ~/xunit
+            - store_artifacts:
+                path: ~/xunit
+    build:
+        docker:
+            - image: docker:17.07.0-ce
+        steps:
+            - checkout
+            - setup_remote_docker:
+                version: 17.07.0-ce
+            - run:
+                name: Build docker image
+                command: docker build -t u6kapps/sample-spring-boot-with-gradle .
+            - run:
+                name: Save docker image
+                command: |
+                    mkdir -p ~/caches/
+                    docker save u6kapps/sample-spring-boot-with-gradle -o ~/caches/image.tar
+            - save_cache:
+                key: docker-{{ .Revision }}
+                paths:
+                    - ~/caches/image.tar
+    push:
+        docker:
+            - image: docker:17.07.0-ce-git
+        steps:
+            - checkout
+            - setup_remote_docker:
+                version: 17.07.0-ce
+            - restore_cache:
+                key: docker-{{ .Revision }}
+                paths:
+                    - ~/caches/image.tar
+            - run:
+                name: Load docker image
+                command: docker load -i ~/caches/image.tar
+            - run:
+                name: Push docker image
+                command: |
+                    TAG=`git describe --abbrev=0`
+                    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+                    docker tag u6kapps/sample-spring-boot-with-gradle u6kapps/sample-spring-boot-with-gradle:${TAG}
+                    docker push u6kapps/sample-spring-boot-with-gradle
+workflows:
+    version: 2
+    unittest-build-and-push:
+        jobs:
+            - unittest
+            - build:
+                requires:
+                    - unittest
+            - push:
+                requires:
+                    - build
+                filters:
+                    branches:
+                        only: master

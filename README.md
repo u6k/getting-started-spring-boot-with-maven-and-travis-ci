@@ -37,6 +37,16 @@ Server:
  Experimental: false
 ```
 
+- CircleCI CLI
+
+```
+$ circleci version
+
+circleci version: 0.0.4292-afe39e9
+Build Agent version: 0.0.4291-afe39e9
+built: 2017-10-01T01:05:45+0000
+```
+
 ## Steps
 
 Spring Boot with Gradleプロジェクトを開始する手順を説明します。
@@ -51,6 +61,8 @@ Spring Boot with Gradleプロジェクトを開始する手順を説明します
 筆者は、次のREADMEテンプレートを好んで使っています。
 
 - [わかりやすい README 駆動開発 - Qiita](https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b)
+
+TODO: READMEテンプレートを自分用に修正します。
 
 Gistでは、次のテンプレートが人気のようです。
 
@@ -178,7 +190,7 @@ $ ./gradlew bootRun
 
 ### Dockerfileを作成
 
-Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。
+Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。ただ、開発用イメージはホスト環境を汚さないためにありますが、Java以外に依存しないのであれば必要ありません。Java以外の例えばLinuxアプリケーションなどに依存するようになったら、改めて開発用イメージを作れば良いです。
 
 - `Dockerfile-dev`
 
@@ -263,11 +275,99 @@ $ docker run \
 
 ### CircleCIビルドを設定
 
-- TODO
+CircleCIでビルドを行うため、ビルド設定ファイルを作成します。
+
+- `.circleci/config.yml`
+    - 例によって、`my-app`は適切に置換します。
+
+```
+version: 2
+jobs:
+    unittest:
+        docker:
+            - image: openjdk:8-alpine
+        steps:
+            - checkout
+            - run:
+                name: Test application
+                command: ./gradlew test
+            - run:
+                name: Save test result
+                command: |
+                    mkdir -p ~/xunit/
+                    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/xunit/ \;
+                when: always
+            - store_test_results:
+                path: ~/xunit
+            - store_artifacts:
+                path: ~/xunit
+    build:
+        docker:
+            - image: docker:17.07.0-ce
+        steps:
+            - checkout
+            - setup_remote_docker:
+                version: 17.07.0-ce
+            - run:
+                name: Build docker image
+                command: docker build -t u6kapps/my-app .
+            - run:
+                name: Save docker image
+                command: |
+                    mkdir -p ~/caches/
+                    docker save u6kapps/my-app -o ~/caches/image.tar
+            - save_cache:
+                key: docker-{{ .Revision }}
+                paths:
+                    - ~/caches/image.tar
+    push:
+        docker:
+            - image: docker:17.07.0-ce-git
+        steps:
+            - checkout
+            - setup_remote_docker:
+                version: 17.07.0-ce
+            - restore_cache:
+                key: docker-{{ .Revision }}
+                paths:
+                    - ~/caches/image.tar
+            - run:
+                name: Load docker image
+                command: docker load -i ~/caches/image.tar
+            - run:
+                name: Push docker image
+                command: |
+                    TAG=`git describe --abbrev=0`
+                    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+                    docker tag u6kapps/my-app u6kapps/my-app:${TAG}
+                    docker push u6kapps/my-app
+workflows:
+    version: 2
+    unittest-build-and-push:
+        jobs:
+            - unittest
+            - build:
+                requires:
+                    - unittest
+            - push:
+                requires:
+                    - build
+                filters:
+                    branches:
+                        only: master
+```
+
+`unittest`、`build`、`push`ジョブを定義します。CircleCI CLIではWorkflowsが機能しないため、動作確認するためにはオプションを指定します。例えば、`unittest`ジョブは次のように実行します。
+
+```
+$ circleci build --job unittest
+```
+
+作成したら、CircleCIにプロジェクトを登録して、ビルドしてみます。
 
 ### v0.0.1をリリース
 
-- TODO とりあえず起動するだけで良い。
+起動してhealthを返すだけですが、この状態をv0.0.1としてリリースします。ここまでの作業をREADMEに反映して、v0.0.1をリリースして、実行用Dockerイメージを作成します。実行用Dockerイメージが作成できたら、自分用サーバーで実行、公開してしまいます。作成したら、さっさと公開することが大事。
 
 ### v0.1.0をリリース
 
@@ -289,6 +389,10 @@ $ docker run \
 - 84. Build - 84.1 Generate build information https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-build-info
 - TODO しばらくは、DBはhsqldbなどで良い。
 - TODO Web 1.0形式で良い。フロントエンドに凝るのは、後で良い。
+
+## おわりに
+
+手順が長い…もっとサクッとプロジェクトを開始して、サクッと実行できるようにしたいです。Dokkuとかかなぁ。
 
 ## Author
 
