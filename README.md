@@ -56,7 +56,24 @@ Gistでは、次のテンプレートが人気のようです。
 
 - [A template to make good README.md](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 
+### GitHubにリポジトリを作成する
+
+やりたいことを整理したら、GitHubにリポジトリを作成してしまいます。速度が大事なWebの世界では、さっさとオープンにすることが大事。また、同様のプロジェクトが既に存在しても、それが十分に知名度を持っていない限り、あまり気にしなくても良いです。
+
+この時、プロジェクトの命名には十分に注意します。公開してドメイン名も取得してしばらくしてから名称でもめると、非常に面倒なことになります。ただ、しばらくは知名度が低いはずなので、まずはランダム・ネーム・ジェネレーターで命名してしまい、v1.0リリースの時にリネームしても良いかもしれません。
+
+- [Random Word Generator - Word+](http://watchout4snakes.com/wo4snakes/Random/RandomWordPlus)
+- [WORDOID - Creative Name Generator - Domain names, company names, product names](http://wordoid.com/)
+
+命名の方法論は、多くの素晴らしい記事があるので(つまり、それだけ多くの人が命名で悩んでいます)、それらを参考にしても良いです。
+
+- [The essential guide to choosing good project names](https://www.articulatemarketing.com/blog/project-names)
+- [Igor Naming Guide Naming Companies](https://www.igorinternational.com/process/naming-guide-product-company-names.php)
+- [Naming Your Software Project in 5 Minutes or Less | Slaptijack](https://slaptijack.com/programming/naming-your-software-project-in-5-minutes-or-less/)
+
 ### Spring Initializrでプロジェクトを作成、ダウンロード
+
+[Spring Initializr](https://start.spring.io/)でプロジェクトを作成、ダウンロードします。
 
 - TODO Gradleプロジェクト
 - TODO 各ファイルの書式を調整
