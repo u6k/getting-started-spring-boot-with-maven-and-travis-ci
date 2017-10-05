@@ -46,8 +46,6 @@ jobs:
                 version: 17.07.0-ce
             - restore_cache:
                 key: docker-{{ .Revision }}
-                paths:
-                    - ~/caches/image.tar
             - run:
                 name: Load docker image
                 command: docker load -i ~/caches/image.tar
