@@ -1,8 +1,9 @@
-FROM gradle:alpine AS dev
+FROM openjdk:8-alpine AS dev
 
 COPY . /var/sample-spring-boot-with-gradle
 WORKDIR /var/sample-spring-boot-with-gradle
-RUN gradle build --stacktrace
+RUN chmod +x gradlew && \
+    ./gradlew build --stacktrace
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
