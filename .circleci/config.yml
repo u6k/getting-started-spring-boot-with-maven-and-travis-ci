@@ -2,12 +2,12 @@ version: 2
 jobs:
     unittest:
         docker:
-            - image: openjdk:8-alpine
+            - image: gradle:alpine
         steps:
             - checkout
             - run:
                 name: Test application
-                command: ./gradlew test
+                command: gradle test
             - run:
                 name: Save test result
                 command: |
