@@ -2,7 +2,7 @@ FROM gradle:alpine AS dev
 
 COPY . /var/sample-spring-boot-with-gradle
 WORKDIR /var/sample-spring-boot-with-gradle
-RUN gradle build
+RUN gradle build --stacktrace
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
