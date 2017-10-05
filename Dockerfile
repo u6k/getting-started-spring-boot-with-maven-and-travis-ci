@@ -1,8 +1,8 @@
-FROM openjdk:8-alpine AS dev
+FROM gradle:alpine AS dev
 
 COPY . /var/sample-spring-boot-with-gradle
 WORKDIR /var/sample-spring-boot-with-gradle
-RUN ./gradlew build
+RUN gradle build
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
