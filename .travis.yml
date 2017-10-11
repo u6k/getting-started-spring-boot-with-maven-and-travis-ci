@@ -1,0 +1,19 @@
+sudo: required
+language: java
+services:
+- docker
+script:
+- "./gradlew test"
+- docker build -t u6kapps/sample-spring-boot-with-gradle .
+deploy:
+- provider: script
+  script: |
+    docker login -u '$DOCKER_USER' -p '$DOCKER_PASS'
+    docker tag u6kapps/sample-spring-boot-with-gradle u6kapps/sample-spring-boot-with-gradle:$TRAVIS_TAG
+    docker push u6kapps/sample-spring-boot-with-gradle
+  on:
+    tags: true
+    all_branches: true
+notifications:
+  slack:
+    secure: eckNk8Ox6ltjU/LuRCgH6DJdf5ceTfuOjBjbl893TMsT0ZqhJWtFkeFNsP+truadNfaky5SfRMIincig2KVOSe7ar11KqAbJxmLeiJ/37gKsXofA6L0SyI+HUWERq/P5eF77xE+eNxyZFarjSR0YYBgxpVKOnOUDYTm5vBVR8Z1oWuD3LvZYn8usl5MWWqKCjGZ2SurgDAhTrNuk8Luste87qXtiS7kmdMJMRlNFCaiBlCuuEDxNj3e1OBK3KXiNkUZymvbmj6LO4Dl0zT+zapNnOCwPHqLpRqYV8JnS8m1ykZYF5xWCQDDpHJyHq6y+8iAcyvUTwjUGM4GBl/m45DhhG2kjI9Fd8UjgKO+uLnkf6QhB9Qemq26IWxVuhDqPqdxTDufivC2WNOP/Qgjmf9XiFwJfzOHHXSJDJ5vdP5L8xV6Ww+IV9e8zGOWDZ9q+8D+eOzrwrUaAvBok/44fXoTG9f4bimvj7N0obvC+bXQ8McsU/YkAsFdp9OLREvpnJ/0fPZKkK3jnHvP1ZUyLUpnNuJIkxZuHLoMPj4WorJVHbyfwcXX4wIlwS2MwX7M8tCFA88aQPDH6keTRqH7jQvCOATL9KENtgzYa2UNfZvqfV3dQR30rkYx6RAHC3V1jyfNxasebnmZvPa7hPkmWKQ5LTqEYWPi49/m8TN7qGOM=
