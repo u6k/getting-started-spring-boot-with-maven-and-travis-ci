@@ -358,6 +358,8 @@ LABEL maintainer="u6k.apps@gmail.com"
 VOLUME /var/my-app
 WORKDIR /var/my-app
 
+EXPOSE 8080
+
 CMD ["sh"]
 ```
 
@@ -368,15 +370,15 @@ FROM openjdk:8-alpine AS dev
 
 COPY . /var/my-app
 WORKDIR /var/my-app
-RUN ./gradlew build
+RUN ./mvnw clean package
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
 
-COPY --from=dev /var/my-app/build/libs/my-app.jar /opt/my-app.jar
+COPY --from=dev /var/my-app/target/my-app.jar /opt/my-app.jar
 
 ENV APP_DB_PATH /var/my-app/db/my-app
-VOLUME /var/my-app
+EXPOSE 8080
 
 CMD ["java", "-jar", "/opt/my-app.jar"]
 ```
@@ -425,7 +427,6 @@ $ docker build -t u6kapps/my-app .
 ```
 $ docker run \
     -p 8080:8080 \
-    -v ${DOCKER_VOLUMES}/my-app:/var/my-app \
     u6kapps/my-app
 ```
 
