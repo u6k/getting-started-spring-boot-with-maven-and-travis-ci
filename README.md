@@ -103,18 +103,25 @@ Gistでは、次のテンプレートが人気のようです。
     - `resources/static/`
     - `resources/templates/`
 - パッケージを調整
-    - Artifact名によってはよく分からないパッケージなることがあります
+    - Artifact名によってはよく分からないパッケージになることがあります
 
 #### `pom.xml`
 
-Javaバージョン、エンコーディングを追加します。
+プロジェクト詳細、開始年、プロジェクトURLを記述します。
 
 ```
-<properties>
-    <java.version>1.8</java.version>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-</properties>
+<description>Demo project for Spring Boot</description>
+<inceptionYear>2017</inceptionYear>
+<url>https://github.com/u6k/template-spring-boot/</url>
+```
+
+組織情報を追加します。ブログやGitHubでも書いておけば良いです。
+
+```
+<organization>
+    <name>u6k Apps</name>
+    <url>https://github.com/u6k</url>
+</organization>
 ```
 
 よく使うライブラリを依存関係に追加します。
@@ -137,10 +144,7 @@ Javaバージョン、エンコーディングを追加します。
 <build>
     <finalName>${project.name}</finalName>
     <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
+        ...
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-eclipse-plugin</artifactId>
@@ -153,22 +157,126 @@ Javaバージョン、エンコーディングを追加します。
 </build>
 ```
 
-レポート設定を追加します。
+レポート設定を追加します。長いですが、ほぼお決まりの設定です。
 
-TODO: レポート設定
+```
+<issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/u6k/template-spring-boot/issues</url>
+</issueManagement>
+
+<ciManagement>
+    <system>Travis CI</system>
+    <url>https://travis-ci.org/u6k/template-spring-boot</url>
+</ciManagement>
+
+<distributionManagement>
+    <site>
+        <id>github-releases</id>
+        <name>GitHub</name>
+        <url>https://github.com/u6k/template-spring-boot/releases</url>
+    </site>
+</distributionManagement>
+
+<licenses>
+    <license>
+        <name>MIT License</name>
+        <url>https://raw.githubusercontent.com/u6k/template-spring-boot/master/LICENSE</url>
+    </license>
+</licenses>
+
+<scm>
+    <url>https://github.com/u6k/template-spring-boot/</url>
+</scm>
+
+<reporting>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <version>2.9</version>
+            <reportSets>
+                <reportSet>
+                    <reports>
+                        <report>index</report>
+                        <report>cim</report>
+                        <report>dependencies</report>
+                        <report>distribution-management</report>
+                        <report>issue-tracking</report>
+                        <report>license</report>
+                        <report>plugin-management</report>
+                        <report>scm</report>
+                        <report>summary</report>
+                    </reports>
+                </reportSet>
+            </reportSets>
+            <configuration>
+                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.20.1</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.17</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>3.8</version>
+            <configuration>
+                <rulesets>
+                    <ruleset>/rulesets/java/basic.xml</ruleset>
+                    <ruleset>/rulesets/java/braces.xml</ruleset>
+                    <ruleset>/rulesets/java/naming.xml</ruleset>
+                </rulesets>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.0.0-M1</version>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>3.0.5</version>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.5</version>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>taglist-maven-plugin</artifactId>
+            <version>2.4</version>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.7</version>
+        </plugin>
+    </plugins>
+</reporting>
+```
 
 #### `src/main/resources/application.properties`
 
 DB接続設定、ログ出力設定を追加します。DBを使用しない場合は、DB接続設定は不要です。ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
 
 ```
-spring.datasource.driverClassName=org.hsqldb.jdbcDriver
-spring.datasource.url=jdbc:hsqldb:file:${APP_DB_PATH:./target/db/my-app}
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:${APP_DB_PATH:./target/db/my-app}
 spring.datasource.username=sa
-spring.datasource.password=
+spring.datasource.password=sa
 spring.jpa.hibernate.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
 logging.level.root=INFO
 logging.level.me.u6k=DEBUG
@@ -195,14 +303,22 @@ public class Main {
 
 空のテスト・クラスを作成します。メイン・クラスと同様に生成されていますが、`MainTest.java`に変更します。レポートのため、1テスト・メソッドのみ、残しておきます。もちろん、テストをちゃんと実装したら、空テスト・メソッドは削除します。
 
-TODO
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MainTest {
+	@Test
+	public void pass() {
+	}
+}
+```
 
 ### Eclipseプロジェクトを生成、動作確認
 
 Spring Bootプロジェクトとして最低限の体裁が整ったので、Eclipseプロジェクトを生成してみます。
 
 ```
-$ ./mvnw eclipse
+$ ./mvnw eclipse:eclipse
 ```
 
 生成したEclipseプロジェクトをインポートしてみて、正常にインポートできることを確認します。
