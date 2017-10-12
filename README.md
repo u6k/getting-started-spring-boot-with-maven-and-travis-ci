@@ -2,7 +2,7 @@
 
 TODO ![Badge Status](https://ci-as-a-service)
 
-自分流のSpring Boot with Gradleプロジェクトを開始する手順を説明します。
+自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。
 
 ## Requirement
 
@@ -37,19 +37,9 @@ Server:
  Experimental: false
 ```
 
-- CircleCI CLI
-
-```
-$ circleci version
-
-circleci version: 0.0.4292-afe39e9
-Build Agent version: 0.0.4291-afe39e9
-built: 2017-10-01T01:05:45+0000
-```
-
 ## Steps
 
-Spring Boot with Gradleプロジェクトを開始する手順を説明します。
+Spring Boot with Mavenプロジェクトを開始する手順を説明します。
 
 ### やりたいことをREADMEに書く
 
@@ -62,7 +52,7 @@ Spring Boot with Gradleプロジェクトを開始する手順を説明します
 
 - [わかりやすい README 駆動開発 - Qiita](https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b)
 
-TODO: READMEテンプレートを自分用に修正します。
+> __TODO:__ READMEテンプレートを自分用に修正します。
 
 Gistでは、次のテンプレートが人気のようです。
 
@@ -87,7 +77,7 @@ Gistでは、次のテンプレートが人気のようです。
 
 [Spring Initializr](https://start.spring.io/)でプロジェクトを作成、ダウンロードします。設定は、次のように行います。
 
-- Gradle Project
+- Maven Project
 - Java
 - Spring Boot Version = 最新の安定版
 - Project Metadata
@@ -105,71 +95,114 @@ Gistでは、次のテンプレートが人気のようです。
 
 ダウンロードしたプロジェクトは展開して、Gitコミットします。次に、プロジェクトの内容を調整します。
 
-- 全体的に
-    - インデントがタブ文字なので、スペース文字に変換
-    - 改行コードがLFなので、CRLFに変換
+#### 全体的に
 
-- `build.gradle`
+- インデントがタブ文字なので、スペース文字に変換
+- 改行コードがLFなので、CRLFに変換
+- 不要ファイルを削除
+    - `resources/static/`
+    - `resources/templates/`
+- パッケージを調整
+    - Artifact名によってはよく分からないパッケージなることがあります
 
-`sourceCompatibility`は設定されていますが`targetCompatibility`が未設定なので、設定します。
+#### `pom.xml`
 
-```
-targetCompatibility = 1.8
-```
-
-Gradleのビルド結果は`build/`に出力されますが、Eclipseはデフォルトで`bin/`に出力します。`build/`に合わせたほうが管理が楽なので、設定を追加します。
-
-```
-eclipse {
-    classpath {
-        defaultOutputDir = file('build/eclipse-classes')
-    }
-}
-```
-
-- パッケージ
-
-Artifactの設定によってはパッケージが不適切になっていることがあるので、修正します。
-
-`resources/static/`、`resources/templates/`が生成されますが、現時点では使わないので、削除します。
-
-- javaファイル
-
-Artifact名でメイン・クラスが生成されますが、個人的な慣習のため`Main.java`に変更します。あわせて、テスト・クラスも生成されているので、`MainTest.java`に変更します。
-
-これらのファイルを開き、フォーマット、インポートの整理を行います。
-
-テスト・クラスには空のテスト・メソッドが定義されていますが、ビルドのために残しておきます。
-
-- `src/main/resources/application.properties`
-
-DBを使用する場合、DB接続設定を追加します。次の設定は、Apache Derbyの設定例です。
+Javaバージョン、エンコーディングを追加します。
 
 ```
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.url=jdbc:h2:${APP_DB_PATH:./build/db/my-app}
+<properties>
+    <java.version>1.8</java.version>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+</properties>
+```
+
+よく使うライブラリを依存関係に追加します。
+
+```
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.6</version>
+</dependency>
+```
+
+ビルド設定を追加します。
+
+- Spring Bootプラグインを追加
+- Eclipseプラグインを追加
+    - ソースコード、Javadocをダウンロード
+
+```
+<build>
+    <finalName>${project.name}</finalName>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <configuration>
+                <downloadSources>true</downloadSources>
+                <downloadJavadocs>true</downloadJavadocs>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+レポート設定を追加します。
+
+TODO: レポート設定
+
+#### `src/main/resources/application.properties`
+
+DB接続設定、ログ出力設定を追加します。DBを使用しない場合は、DB接続設定は不要です。ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
+
+```
+spring.datasource.driverClassName=org.hsqldb.jdbcDriver
+spring.datasource.url=jdbc:hsqldb:file:${APP_DB_PATH:./target/db/my-app}
 spring.datasource.username=sa
-spring.datasource.password=sa
+spring.datasource.password=
 spring.jpa.hibernate.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-```
+spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect
 
-JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./build/db/my-app`を設定しています。これは、開発時は`./build/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
-
-ログ出力設定を追加します。筆者は、「ライブラリはともかくアプリケーションはできるだけログ出力したほうが良い」と考えているため、次のように設定します。rootではないほうの設定は、アプリケーションのパッケージ名を設定していることに注意してください。
-
-```
 logging.level.root=INFO
 logging.level.me.u6k=DEBUG
 ```
 
-### Eclipseプロジェクトを作成、動作確認
+JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./target/db/my-app`を設定しています。これは、開発時は`./target/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
+
+TODO: プロファイルで管理すべき
+
+#### メイン・クラス
+
+エントリーポイントを作成します。Artifact名でクラスが生成されていますが、個人的な慣習のため`Main.java`に変更します。
+
+```
+@SpringBootApplication
+public class Main {
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
+}
+```
+
+#### テスト・クラス
+
+空のテスト・クラスを作成します。メイン・クラスと同様に生成されていますが、`MainTest.java`に変更します。レポートのため、1テスト・メソッドのみ、残しておきます。もちろん、テストをちゃんと実装したら、空テスト・メソッドは削除します。
+
+TODO
+
+### Eclipseプロジェクトを生成、動作確認
 
 Spring Bootプロジェクトとして最低限の体裁が整ったので、Eclipseプロジェクトを生成してみます。
 
 ```
-$ ./gradlew eclipse
+$ ./mvnw eclipse
 ```
 
 生成したEclipseプロジェクトをインポートしてみて、正常にインポートできることを確認します。
@@ -177,7 +210,7 @@ $ ./gradlew eclipse
 次に、実行してみます。
 
 ```
-$ ./gradlew bootRun
+$ ./mvnw spring-boot:run
 ```
 
 起動したら、 http://localhost:8080/health にアクセスして、次のように出力されることを確認します。
@@ -186,11 +219,19 @@ $ ./gradlew bootRun
 {"status":"UP"}
 ```
 
-また、`./build/db/my-app`にDBデータが出力されることを確認します。
+また、`./target/db/my-app`にDBデータが出力されることを確認します。
+
+プロジェクト・レポートを出力してみます。
+
+```
+$ ./mvnw site
+```
+
+`target/site/`にレポートが出力されることを確認します。
 
 ### Dockerfileを作成
 
-Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。ただ、開発用イメージはホスト環境を汚さないためにありますが、Java以外に依存しないのであれば必要ありません。Java以外の例えばLinuxアプリケーションなどに依存するようになったら、改めて開発用イメージを作れば良いです。
+Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。ただ、開発用イメージはホスト環境を汚さないためにありますが、Java以外に依存しないのであれば必要ありません。Java以外の、例えばLinuxアプリケーションなどに依存するようになったら、改めて開発用イメージを作れば良いです。
 
 - `Dockerfile-dev`
 
@@ -216,7 +257,7 @@ RUN ./gradlew build
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
 
-COPY --from=dev /var/my-app/build/libs/my-app-x.x.x.jar /opt/my-app.jar
+COPY --from=dev /var/my-app/build/libs/my-app.jar /opt/my-app.jar
 
 ENV APP_DB_PATH /var/my-app/db/my-app
 VOLUME /var/my-app
@@ -224,9 +265,7 @@ VOLUME /var/my-app
 CMD ["java", "-jar", "/opt/my-app.jar"]
 ```
 
-ファイル中の`my-app`は、アプリケーション名に変更します。`Dockerfile`の`x.x.x`は、バージョン番号に変更します。DBを使用する場合、出力先としての`/var/my-app`と`APP_DB_PATH`環境変数を定義しますが、DBを使用しない場合は不要です。
-
-__TODO:__ バージョン番号は`build.gradle`の1箇所で管理したいのですが、現時点ではしかたなく`Dockerfile`にも記述してしまっています。将来的に、これは解消したいと考えています。
+ファイル中の`my-app`は、アプリケーション名に変更します。DBを使用する場合、出力先としての`/var/my-app`と`APP_DB_PATH`環境変数を定義しますが、DBを使用しない場合は不要です。
 
 Dockerfileを作成したら、動作確認を行います。
 
@@ -243,19 +282,20 @@ $ docker run \
     -it \
     -p 8080:8080 \
     -v ${PWD}:/var/my-app \
+    -v ${HOME}/.m2:/root/.m2 \
     my-app-dev sh
 ```
 
 アプリケーションを起動して、 http://localhost:8080/health にアクセスできることを確認します。
 
 ```
-$ ./gradlew bootRun
+$ ./mvnw spring-boot:run
 ```
 
 テストを実行できることを確認します。
 
 ```
-$ ./gradlew test
+$ ./mvnw test
 ```
 
 実行用Dockerイメージを構築します。
@@ -273,97 +313,9 @@ $ docker run \
     u6kapps/my-app
 ```
 
-### CircleCIビルドを設定
+### Travis CIビルドを設定
 
-CircleCIでビルドを行うため、ビルド設定ファイルを作成します。
-
-- `.circleci/config.yml`
-    - 例によって、`my-app`は適切に置換します。
-
-```
-version: 2
-jobs:
-    unittest:
-        docker:
-            - image: openjdk:8-alpine
-        steps:
-            - checkout
-            - run:
-                name: Test application
-                command: ./gradlew test
-            - run:
-                name: Save test result
-                command: |
-                    mkdir -p ~/xunit/
-                    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/xunit/ \;
-                when: always
-            - store_test_results:
-                path: ~/xunit
-            - store_artifacts:
-                path: ~/xunit
-    build:
-        docker:
-            - image: docker:17.07.0-ce
-        steps:
-            - checkout
-            - setup_remote_docker:
-                version: 17.07.0-ce
-            - run:
-                name: Build docker image
-                command: docker build -t u6kapps/my-app .
-            - run:
-                name: Save docker image
-                command: |
-                    mkdir -p ~/caches/
-                    docker save u6kapps/my-app -o ~/caches/image.tar
-            - save_cache:
-                key: docker-{{ .Revision }}
-                paths:
-                    - ~/caches/image.tar
-    push:
-        docker:
-            - image: docker:17.07.0-ce-git
-        steps:
-            - checkout
-            - setup_remote_docker:
-                version: 17.07.0-ce
-            - restore_cache:
-                key: docker-{{ .Revision }}
-                paths:
-                    - ~/caches/image.tar
-            - run:
-                name: Load docker image
-                command: docker load -i ~/caches/image.tar
-            - run:
-                name: Push docker image
-                command: |
-                    TAG=`git describe --abbrev=0`
-                    docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-                    docker tag u6kapps/my-app u6kapps/my-app:${TAG}
-                    docker push u6kapps/my-app
-workflows:
-    version: 2
-    unittest-build-and-push:
-        jobs:
-            - unittest
-            - build:
-                requires:
-                    - unittest
-            - push:
-                requires:
-                    - build
-                filters:
-                    branches:
-                        only: master
-```
-
-`unittest`、`build`、`push`ジョブを定義します。CircleCI CLIではWorkflowsが機能しないため、動作確認するためにはオプションを指定します。例えば、`unittest`ジョブは次のように実行します。
-
-```
-$ circleci build --job unittest
-```
-
-作成したら、CircleCIにプロジェクトを登録して、ビルドしてみます。
+TODO
 
 ### v0.0.1をリリース
 
