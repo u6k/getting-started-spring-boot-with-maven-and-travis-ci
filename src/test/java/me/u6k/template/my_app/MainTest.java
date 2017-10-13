@@ -12,6 +12,7 @@ public class MainTest {
 
     @Test
     public void pass() {
+        // TODO: 後で削除します
     }
 
 }

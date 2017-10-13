@@ -37,6 +37,9 @@ Server:
  Experimental: false
 ```
 
+- Travis CI
+    - CIを使わない場合、該当手順を読み飛ばしてください。
+
 ## Steps
 
 Spring Boot with Mavenプロジェクトを開始する手順を説明します。
@@ -284,7 +287,7 @@ logging.level.me.u6k=DEBUG
 
 JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./target/db/my-app`を設定しています。これは、開発時は`./target/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
 
-TODO: プロファイルで管理すべき
+> __TODO:__ プロファイルで管理すべき
 
 #### メイン・クラス
 
@@ -307,9 +310,10 @@ public class Main {
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MainTest {
-	@Test
-	public void pass() {
-	}
+    @Test
+    public void pass() {
+        // TODO: 後で削除します
+    }
 }
 ```
 
