@@ -2,8 +2,7 @@ FROM openjdk:8-alpine AS dev
 
 COPY . /var/my-app
 WORKDIR /var/my-app
-RUN chmod +x mvnw && \
-    ./mvnw clean package
+RUN ./mvnw clean package
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"

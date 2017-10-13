@@ -317,6 +317,14 @@ public class MainTest {
 }
 ```
 
+#### `mvnw`に実行権限を付与
+
+Windowsで作業をしている場合、`mvnw`の実行権限が保持されない場合があります。この時、Windows以外のプラットフォーム、例えばTravis CIで`mvnw`を実行しようとすると、実行権限がないためにエラーになります。このため、`mvnw`に実行権限を付与します。
+
+```
+$ git update-index --chmod=+x mvnw
+```
+
 ### Eclipseプロジェクトを生成、動作確認
 
 Spring Bootプロジェクトとして最低限の体裁が整ったので、Eclipseプロジェクトを生成してみます。
@@ -374,8 +382,7 @@ FROM openjdk:8-alpine AS dev
 
 COPY . /var/my-app
 WORKDIR /var/my-app
-RUN chmod +x mvnw && \
-    ./mvnw clean package
+RUN ./mvnw clean package
 
 FROM openjdk:8-alpine
 LABEL maintainer="u6k.apps@gmail.com"
