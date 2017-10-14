@@ -42,7 +42,7 @@ Server:
 
 ## Steps
 
-Spring Boot with Mavenプロジェクトを開始する手順を説明します。
+Spring Boot with Mavenプロジェクトを開始する手順を説明します。なお、説明中の`u6kapps`や`my-app`などは、適宜読み替えてください。
 
 ### やりたいことをREADMEに書く
 
@@ -444,7 +444,116 @@ $ docker run \
 
 ### Travis CIビルドを設定
 
-TODO
+ビルド作業はCIサービスに任せます。ここでいう「ビルド作業」は、具体的にはクリーンな環境で次の作業を行うことを言います。
+
+- ユニット・テスト
+- E2Eテスト
+- 各種メトリクス
+- Dockerイメージをビルド
+- Dockerイメージをアップロード
+- テスト、メトリクスのレポートをアップロード
+- 上記の結果をSlack通知
+
+> __TODO:__ 「E2Eテスト」「レポートをアップロード」が実装できていません。
+> __TODO:__ Docker multi stage buildにおいて、依存ライブラリのキャッシュを再利用することができません。このため、Dockerイメージのビルドに時間がかかります。
+
+CIサービスは、Travis CI、Circle CI、wercker、Jenkinsなどがありますが、ここではTravis CIを利用します。Circle CIは2.0になってハマりどころが増え、werckerは知見が少なく、Jenkinsは(基本的に)オンプレミスなので。Travis CIのサインアップや基本的な利用方法は、ここでは説明しません。
+
+Travis CIでビルドを行うため、`.travis.yml`ファイルを次のように作成します。
+
+```
+sudo: required
+language: java
+
+services:
+    - docker
+
+before_install:
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    - sudo apt-get update
+    - sudo apt-get -y install docker-ce
+
+script:
+    - docker build -t u6kapps/my-app .
+
+after_success:
+    - if [ -n "$TRAVIS_TAG" ]; then
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+          docker tag u6kapps/my-app u6kapps/my-app:$TRAVIS_TAG;
+          docker push u6kapps/my-app;
+      else
+          echo skip docker push;
+      fi
+
+notifications:
+    slack:
+        secure: xxx
+```
+
+内容を説明します。
+
+```
+sudo: required
+language: java
+
+services:
+    - docker
+```
+
+Travis CIでDockerを利用するための宣言です。`sudo`は本来は不必要ですが、Dockerを利用するために必要です。
+
+Dockerを利用するだけならば`language`は不必要ですが、`./mvnw site`を実行するため、`language: java`を宣言します。
+
+```
+before_install:
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    - sudo apt-get update
+    - sudo apt-get -y install docker-ce
+```
+
+Travis CIのDockerバージョンは少々古く、Docker multi stage buildがサポートされていません。このため、最新版のDockerにアップグレードする必要があり、そのための処理です。
+
+- 参照: [Using Docker in Builds - Travis CI](https://docs.travis-ci.com/user/docker/#Installing-a-newer-Docker-version)
+
+```
+script:
+    - docker build -t u6kapps/my-app .
+```
+
+Dockerイメージをビルドします。
+
+> __TODO:__ ユニット・テスト、E2Eテスト、レポーティングを実装します。
+
+```
+after_success:
+    - if [ -n "$TRAVIS_TAG" ]; then
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+          docker tag u6kapps/my-app u6kapps/my-app:$TRAVIS_TAG;
+          docker push u6kapps/my-app;
+      else
+          echo skip docker push;
+      fi
+```
+
+Gitタグのpushによるビルドの場合、Docker HubにDockerイメージをアップロードします。Gitタグのpushによるビルドの場合、`TRAVIS_TAG`環境変数に文字列が設定されるので、設定された場合は`docker login`、`docker tag`、`docker push`を行います。この時、あらかじめTravis CIの該当プロジェクトの環境変数に`DOCKER_USER`、`DOCKER_PASS`を設定しておきます。
+
+```
+notifications:
+    slack:
+        secure: xxx
+```
+
+ビルドが成功/失敗した時に、Slackで通知します。Slackの「Manage Apps」でTravis CIを追加すると、「Setup Instructions」で`notifications`を追加するコマンドが説明されています。ただ、このコマンドにはRubyとtravisコマンドが必要になります。環境はなるべく汚したくないので、ここではtravisコマンドが使えるDockerイメージを使用します。具体的には、次のようにコマンドを実行します。
+
+```
+$ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add notifications.slack
+```
+
+なお、このコマンドを実行すると`.travis.yml`が自動整形されますが、わざわざ手動で整形しなおす必要もないでしょう。
+
+`.travis.yml`を作成したら、Travis CIで該当プロジェクトを有効化して、Git pushします。しばらく待つと、Travis CIがビルドを開始します。もし失敗したら、修正します。
 
 ### v0.0.1をリリース
 
