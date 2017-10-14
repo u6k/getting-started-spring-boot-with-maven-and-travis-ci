@@ -270,7 +270,7 @@ Gistでは、次のテンプレートが人気のようです。
 
 #### `src/main/resources/application.properties`
 
-DB接続設定、ログ出力設定を追加します。DBを使用しない場合は、DB接続設定は不要です。ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
+DB接続設定、info設定、ログ出力設定を追加します。
 
 ```
 spring.datasource.driverClassName=org.h2.Driver
@@ -281,13 +281,19 @@ spring.jpa.hibernate.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
+info.app.version=@version@
+
 logging.level.root=INFO
 logging.level.me.u6k=DEBUG
 ```
 
-JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./target/db/my-app`を設定しています。これは、開発時は`./target/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
+DBを使用しない場合は、DB接続設定は不要です。JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./target/db/my-app`を設定しています。これは、開発時は`./target/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
 
 > __TODO:__ プロファイルで管理すべき
+
+info設定は、Spring Boot Actuatorによって有効になる`/info`エンドポイントで情報を出力するための設定です。この場合、`pom.xml`で定義したバージョン情報を出力します。
+
+ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
 
 #### メイン・クラス
 
@@ -341,10 +347,10 @@ $ ./mvnw eclipse:eclipse
 $ ./mvnw spring-boot:run
 ```
 
-起動したら、 http://localhost:8080/health にアクセスして、次のように出力されることを確認します。
+起動したら、 http://localhost:8080/info にアクセスして、次のように出力されることを確認します。
 
 ```
-{"status":"UP"}
+{"app":{"version":"0.0.1-SNAPSHOT"}}
 ```
 
 また、`./target/db/my-app`にDBデータが出力されることを確認します。
@@ -416,7 +422,7 @@ $ docker run \
     my-app-dev sh
 ```
 
-アプリケーションを起動して、 http://localhost:8080/health にアクセスできることを確認します。
+アプリケーションを起動して、 http://localhost:8080/info にアクセスできることを確認します。
 
 ```
 $ ./mvnw spring-boot:run
@@ -434,7 +440,7 @@ $ ./mvnw test
 $ docker build -t u6kapps/my-app .
 ```
 
-実行用Dockerイメージを起動して、 http://localhost:8080/health にアクセスできることを確認します。
+実行用Dockerイメージを起動して、 http://localhost:8080/info にアクセスできることを確認します。
 
 ```
 $ docker run \
@@ -557,7 +563,7 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
 
 ### v0.0.1をリリース
 
-起動してhealthを返すだけですが、この状態をv0.0.1としてリリースします。ここまでの作業をREADMEに反映して、v0.0.1をリリースして、実行用Dockerイメージを作成します。実行用Dockerイメージが作成できたら、自分用サーバーで実行、公開してしまいます。さっさと公開することが大事。
+起動してinfoを返すだけですが、この状態をv0.0.1としてリリースします。ここまでの作業をREADMEに反映して、v0.0.1をリリースして、実行用Dockerイメージを作成します。実行用Dockerイメージが作成できたら、自分用サーバーで実行、公開してしまいます。さっさと公開することが大事。
 
 ### v0.1.0をリリース
 
