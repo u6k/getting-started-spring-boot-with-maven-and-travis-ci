@@ -293,6 +293,8 @@ DBを使用しない場合は、DB接続設定は不要です。JDBC URLに`APP_
 
 info設定は、Spring Boot Actuatorによって有効になる`/info`エンドポイントで情報を出力するための設定です。この場合、`pom.xml`で定義したバージョン情報を出力します。
 
+- 参照: [47.7.2 Custom application info information](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-application-info-env)
+
 ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
 
 #### メイン・クラス
@@ -563,24 +565,69 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
 
 ### v0.0.1をリリース
 
-起動してinfoを返すだけですが、この状態をv0.0.1としてリリースします。ここまでの作業をREADMEに反映して、v0.0.1をリリースして、実行用Dockerイメージを作成します。実行用Dockerイメージが作成できたら、自分用サーバーで実行、公開してしまいます。さっさと公開することが大事。
+起動してinfoを返すだけですが、この状態をv0.0.1としてリリースします。次に、リリース作業を説明します。
 
-### v0.1.0をリリース
+#### チケットが全てクローズしたことを確認
 
-- TODO 最低限必要な、ドッグフーディングできる機能を実装する。
-- TODO この時点で、自分だけが使えるように実行環境で実行する。
-- TODO ユーザー管理はまだ不要。最初のころはBASIC認証で十分。
-- TODO リファレンス、サイト・ドキュメントも不要。
-- TODO 未実装のFeatureはTODOに書く。
+念のため、リリースするバージョンのチケットが全てクローズしたことを確認します。
 
-### 機能を少しずつリリース
+#### リリース・ブランチを作成
 
-- TODO CHANGELOGに、そのバージョンの実装目標を書いておく。Keep a Changelog http://keepachangelog.com/
-- TODO 少しずつ機能を追加、体裁を整備していく。
-- TODO UML図は、PlantUMLで書く。
-- TODO REST APIリファレンスは、Swaggerで書く。
-- TODO 設計情報は、サイト・ドキュメントにMarkdownで書く。
-- TODO バージョン情報を表示する。Spring Bootアプリケーションのバージョン情報を外部から確認したい - Qiita https://qiita.com/u6k/items/d86e339ab870c39ed08f
+リリース・ブランチを作成します。ブランチ名はバージョン情報と同じにします(例: `0.0.1`)。
+
+#### READMEに反映
+
+ここまでの作業をREADMEに反映します。提供機能、ビルド方法、使用方法などを見直し、必要であれば更新します。
+
+#### バージョン情報を更新
+
+バージョン情報を更新します。基本的には`pom.xml`に定義したバージョン情報を更新(`-SNAPSHOT`を除去)すれば良いですが、もし他のファイルにバージョン情報を記述していれば、それも更新します。チェックリスト化するべきです。
+
+#### テスト
+
+改めて、ユニット・テスト、E2Eテストを行い、問題がないことを確認します。
+
+#### リリース・ブランチを完了
+
+リリース・ブランチを完了します。これにより、次の更新が行われます。
+
+- master、developブランチにマージ
+- Gitタグを設定
+- Travis CIでビルド
+
+#### 自分用サーバーで実行
+
+Travis CIでビルドが完了してDocker Hubにアップロードされたら、自分用サーバーで実行します。動作確認を行い、問題がないことを確認します。
+
+#### 次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新
+
+次のバージョンで実装したい機能を整理して、ロードマップを作成します。整理できたら、`pom.xml`のバージョン情報を更新します。この時、開発中の意味で`-SNAPSHOT`を付与します。
+
+### v1.0.0に向けて
+
+v0.0.1以降は、機能を少しずつ実装していきます。ただ、なるべく早く、最低限でも良いので機能を使いたいと思います。このため、しばらくは次のことに留意して作業を進めます。
+
+- 最低限必要な、ドッグフーディングできる機能を実装する。
+- この時点で、自分だけが使えるように実行環境で実行する。
+- ユーザー管理はまだ不要。最初のころはBASIC認証で十分。
+    - v1.0.0直前あたりで、ユーザー管理機能を実装する。
+    - OpenIDを使用する。アプリケーションでアカウント情報は持たないようにする。
+- リファレンスは不要。
+- 未実装のFeatureはTODOに書く。
+- 互換性は意識しない。
+
+自分が日常的に使えるレベルの機能が実装できたら、それをv1.0.0としてリリースします。
+
+### v1.0.0以降、機能を少しずつリリース
+
+v1.0.0以降は、広く使ってもらうために機能を慎重に実装します。
+
+- CHANGELOGに、そのバージョンの実装目標を書いておく。
+    - [Keep a Changelog](http://keepachangelog.com/)
+- 少しずつ機能を追加、体裁を整備していく。
+- UML図は、PlantUMLで書く。
+- REST APIリファレンスは、Swaggerで書く。
+- 設計情報は、サイト・ドキュメントにMarkdownで書く。
 - 47. Endpoints - 47.7.4 Build information https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-application-info-build
 - 84. Build - 84.1 Generate build information https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-build-info
 - TODO しばらくは、DBはhsqldbなどで良い。
