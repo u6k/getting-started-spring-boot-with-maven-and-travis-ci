@@ -4,7 +4,7 @@
 
     <groupId>me.u6k.template</groupId>
     <artifactId>my-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>my-app</name>
