@@ -1,8 +1,47 @@
-# template-spring-boot
+# Getting started Spring Boot with Maven and Travis CI
 
-TODO ![Badge Status](https://ci-as-a-service)
+[![Travis](https://img.shields.io/travis/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci) [![GitHub release](https://img.shields.io/github/release/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases) [![license](https://img.shields.io/github/license/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/blob/master/LICENSE) [![Docker Stars](https://img.shields.io/docker/stars/u6kapps/my-app.svg)](https://hub.docker.com/r/u6kapps/my-app/)
 
 自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。
+
+## Table of Contents
+
+<!-- TOC depthFrom:2 orderedList:true -->
+
+1. [Table of Contents](#table-of-contents)
+2. [Requirement](#requirement)
+3. [Steps](#steps)
+    1. [やりたいことをREADMEに書く](#やりたいことをreadmeに書く)
+    2. [GitHubにリポジトリを作成する](#githubにリポジトリを作成する)
+    3. [v0.0.1、起動するだけのアプリケーションと開発環境を構築](#v001起動するだけのアプリケーションと開発環境を構築)
+        1. [Spring Initializrでプロジェクトを作成](#spring-initializrでプロジェクトを作成)
+            1. [全体的に調整](#全体的に調整)
+            2. [`pom.xml`を修正](#pomxmlを修正)
+            3. [`src/main/resources/application.properties`を修正](#srcmainresourcesapplicationpropertiesを修正)
+            4. [メイン・クラスを修正](#メイン・クラスを修正)
+            5. [テスト・クラスを修正](#テスト・クラスを修正)
+            6. [`mvnw`に実行権限を付与](#mvnwに実行権限を付与)
+        2. [Eclipseプロジェクトを生成](#eclipseプロジェクトを生成)
+        3. [Dockerfileを作成](#dockerfileを作成)
+        4. [Travis CIビルドを設定](#travis-ciビルドを設定)
+        5. [v0.0.1をリリース](#v001をリリース)
+            1. [チケットが全てクローズしたことを確認](#チケットが全てクローズしたことを確認)
+            2. [リリース・ブランチを作成](#リリース・ブランチを作成)
+            3. [READMEを更新](#readmeを更新)
+            4. [CHANGELOGを更新](#changelogを更新)
+            5. [バージョン情報を更新](#バージョン情報を更新)
+            6. [テスト](#テスト)
+            7. [リリース・ブランチを完了](#リリース・ブランチを完了)
+            8. [GitHubリリースノートを作成](#githubリリースノートを作成)
+            9. [自分用サーバーで実行](#自分用サーバーで実行)
+            10. [次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新](#次のバージョンのチケットを整理ロードマップを作成バージョン情報を更新)
+    4. [v0.1.0 - v1.0.0、最低限の機能をなるべく早くリリース](#v010---v100最低限の機能をなるべく早くリリース)
+    5. [v1.0.0以降、機能を少しずつリリース](#v100以降機能を少しずつリリース)
+    6. [おわりに](#おわりに)
+4. [Author](#author)
+5. [License](#license)
+
+<!-- /TOC -->
 
 ## Requirement
 
@@ -39,6 +78,12 @@ Server:
 
 - Travis CI
     - CIを使わない場合、該当手順を読み飛ばしてください。
+- GitHub、git-flow
+    - リポジトリにはGitHub、ブランチ管理はgit-flowで行います。他のリポジトリやブランチ管理を行う場合は、適宜読み替えてください。
+- Docker Hub
+    - DockerイメージをDocker Hubで管理します。他のDockerリポジトリを使用する場合は、適宜読み替えてください。
+- 自分用サーバー
+    - Dockerコンテナが動作するサーバーを用意します。ご利用のクラウド・サービスに読み替えるか、アプリケーションを公開しない場合は読み飛ばしてください。
 
 ## Steps
 
@@ -76,7 +121,11 @@ Gistでは、次のテンプレートが人気のようです。
 - [Igor Naming Guide Naming Companies](https://www.igorinternational.com/process/naming-guide-product-company-names.php)
 - [Naming Your Software Project in 5 Minutes or Less | Slaptijack](https://slaptijack.com/programming/naming-your-software-project-in-5-minutes-or-less/)
 
-### Spring Initializrでプロジェクトを作成、ダウンロード
+### v0.0.1、起動するだけのアプリケーションと開発環境を構築
+
+v0.0.1に向けた作業を行います。v0.0.1は、起動するだけのアプリケーションと開発環境を整備した状態になります。
+
+#### Spring Initializrでプロジェクトを作成
 
 [Spring Initializr](https://start.spring.io/)でプロジェクトを作成、ダウンロードします。設定は、次のように行います。
 
@@ -98,7 +147,7 @@ Gistでは、次のテンプレートが人気のようです。
 
 ダウンロードしたプロジェクトは展開して、Gitコミットします。次に、プロジェクトの内容を調整します。
 
-#### 全体的に
+##### 全体的に調整
 
 - インデントがタブ文字なので、スペース文字に変換
 - 改行コードがLFなので、CRLFに変換
@@ -108,7 +157,7 @@ Gistでは、次のテンプレートが人気のようです。
 - パッケージを調整
     - Artifact名によってはよく分からないパッケージになることがあります
 
-#### `pom.xml`
+##### `pom.xml`を修正
 
 プロジェクト詳細、開始年、プロジェクトURLを記述します。
 
@@ -268,7 +317,7 @@ Gistでは、次のテンプレートが人気のようです。
 </reporting>
 ```
 
-#### `src/main/resources/application.properties`
+##### `src/main/resources/application.properties`を修正
 
 DB接続設定、info設定、ログ出力設定を追加します。
 
@@ -297,7 +346,7 @@ info設定は、Spring Boot Actuatorによって有効になる`/info`エンド�
 
 ログ出力は、「ライブラリはともかく自アプリケーションはできるだけログ出力すべき」と考えているため、DEBUGレベルを設定します。
 
-#### メイン・クラス
+##### メイン・クラスを修正
 
 エントリーポイントを作成します。Artifact名でクラスが生成されていますが、個人的な慣習のため`Main.java`に変更します。
 
@@ -310,7 +359,7 @@ public class Main {
 }
 ```
 
-#### テスト・クラス
+##### テスト・クラスを修正
 
 空のテスト・クラスを作成します。メイン・クラスと同様に生成されていますが、`MainTest.java`に変更します。レポートのため、1テスト・メソッドのみ、残しておきます。もちろん、テストをちゃんと実装したら、空テスト・メソッドは削除します。
 
@@ -325,7 +374,7 @@ public class MainTest {
 }
 ```
 
-#### `mvnw`に実行権限を付与
+##### `mvnw`に実行権限を付与
 
 Windowsで作業をしている場合、`mvnw`の実行権限が保持されない場合があります。この時、Windows以外のプラットフォーム、例えばTravis CIで`mvnw`を実行しようとすると、実行権限がないためにエラーになります。このため、`mvnw`に実行権限を付与します。
 
@@ -333,7 +382,7 @@ Windowsで作業をしている場合、`mvnw`の実行権限が保持されな�
 $ git update-index --chmod=+x mvnw
 ```
 
-### Eclipseプロジェクトを生成、動作確認
+#### Eclipseプロジェクトを生成
 
 Spring Bootプロジェクトとして最低限の体裁が整ったので、Eclipseプロジェクトを生成してみます。
 
@@ -365,7 +414,7 @@ $ ./mvnw site
 
 `target/site/`にレポートが出力されることを確認します。
 
-### Dockerfileを作成
+#### Dockerfileを作成
 
 Dockerで開発用イメージと実行用イメージを構築するために、Dockerfileを作成します。開発用と実行用の違いは、開発用は開発中ソースコードをマウントしてシェルを起動しますが、実行用はビルドしたjarファイルを基に起動します。ただ、開発用イメージはホスト環境を汚さないためにありますが、Java以外に依存しないのであれば必要ありません。Java以外の、例えばLinuxアプリケーションなどに依存するようになったら、改めて開発用イメージを作れば良いです。
 
@@ -450,7 +499,7 @@ $ docker run \
     u6kapps/my-app
 ```
 
-### Travis CIビルドを設定
+#### Travis CIビルドを設定
 
 ビルド作業はCIサービスに任せます。ここでいう「ビルド作業」は、具体的にはクリーンな環境で次の作業を行うことを言います。
 
@@ -563,31 +612,47 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
 
 `.travis.yml`を作成したら、Travis CIで該当プロジェクトを有効化して、Git pushします。しばらく待つと、Travis CIがビルドを開始します。もし失敗したら、修正します。
 
-### v0.0.1をリリース
+#### v0.0.1をリリース
 
 起動してinfoを返すだけですが、この状態をv0.0.1としてリリースします。次に、リリース作業を説明します。
 
-#### チケットが全てクローズしたことを確認
+##### チケットが全てクローズしたことを確認
 
 念のため、リリースするバージョンのチケットが全てクローズしたことを確認します。
 
-#### リリース・ブランチを作成
+##### リリース・ブランチを作成
 
 リリース・ブランチを作成します。ブランチ名はバージョン情報と同じにします(例: `0.0.1`)。
 
-#### READMEに反映
+##### READMEを更新
 
-ここまでの作業をREADMEに反映します。提供機能、ビルド方法、使用方法などを見直し、必要であれば更新します。
+ここまでの作業をREADMEに反映します。
 
-#### バージョン情報を更新
+- バッヂ
+    - [Shields.io: Quality metadata badges for open source projects](https://shields.io/)
+        - Travis
+        - GitHub release
+        - license
+        - Docker Stars
+        - __TODO:__ SonarQube Coverage
+        - __TODO:__ SonarQube Tech Debt
+- 提供機能
+- ビルド方法
+- 使用方法
+
+##### CHANGELOGを更新
+
+CHANGELOGを更新します。書式は[Keep a Changelog](http://keepachangelog.com/)を参考にしますが、v1.0.0までは対応したIssueを列挙しておけば良いです。特にv0.0.1は書くこともないので、"first release"とでも書いておけば良いです。
+
+##### バージョン情報を更新
 
 バージョン情報を更新します。基本的には`pom.xml`に定義したバージョン情報を更新(`-SNAPSHOT`を除去)すれば良いですが、もし他のファイルにバージョン情報を記述していれば、それも更新します。チェックリスト化するべきです。
 
-#### テスト
+##### テスト
 
 改めて、ユニット・テスト、E2Eテストを行い、問題がないことを確認します。
 
-#### リリース・ブランチを完了
+##### リリース・ブランチを完了
 
 リリース・ブランチを完了します。これにより、次の更新が行われます。
 
@@ -595,15 +660,19 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
 - Gitタグを設定
 - Travis CIでビルド
 
-#### 自分用サーバーで実行
+##### GitHubリリースノートを作成
+
+GitHub releaseに該当バージョンを作成して、CHANGELOGの内容をコピペします。
+
+##### 自分用サーバーで実行
 
 Travis CIでビルドが完了してDocker Hubにアップロードされたら、自分用サーバーで実行します。動作確認を行い、問題がないことを確認します。
 
-#### 次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新
+##### 次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新
 
 次のバージョンで実装したい機能を整理して、ロードマップを作成します。整理できたら、`pom.xml`のバージョン情報を更新します。この時、開発中の意味で`-SNAPSHOT`を付与します。
 
-### v1.0.0に向けて
+### v0.1.0 - v1.0.0、最低限の機能をなるべく早くリリース
 
 v0.0.1以降は、機能を少しずつ実装していきます。ただ、なるべく早く、最低限でも良いので機能を使いたいと思います。このため、しばらくは次のことに留意して作業を進めます。
 
@@ -633,7 +702,7 @@ v1.0.0以降は、広く使ってもらうために機能を慎重に実装し�
 - TODO しばらくは、DBはhsqldbなどで良い。
 - TODO Web 1.0形式で良い。フロントエンドに凝るのは、後で良い。
 
-## おわりに
+### おわりに
 
 手順が長い…もっとサクッとプロジェクトを開始して、サクッと実行できるようにしたいです。Dokkuとかかなぁ。
 
