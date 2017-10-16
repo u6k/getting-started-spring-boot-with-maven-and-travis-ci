@@ -1,6 +1,6 @@
 # Getting started Spring Boot with Maven and Travis CI
 
-[![Travis](https://img.shields.io/travis/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci) [![GitHub release](https://img.shields.io/github/release/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases) [![license](https://img.shields.io/github/license/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/blob/master/LICENSE) [![Docker Stars](https://img.shields.io/docker/stars/u6kapps/my-app.svg)](https://hub.docker.com/r/u6kapps/my-app/)
+[![Travis](https://img.shields.io/travis/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci) [![GitHub release](https://img.shields.io/github/release/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases) [![license](https://img.shields.io/github/license/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/blob/master/LICENSE) [![Docker Stars](https://img.shields.io/docker/stars/u6kapps/my-app.svg)](https://hub.docker.com/r/u6kapps/my-app/) [![project-reports](https://img.shields.io/badge/site-project--reports-orange.svg)](https://u6k.github.io/getting-started-spring-boot-with-maven-and-travis-ci/project-reports.html)
 
 自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。
 
@@ -34,7 +34,8 @@
             7. [リリース・ブランチを完了](#リリース・ブランチを完了)
             8. [GitHubリリースノートを作成](#githubリリースノートを作成)
             9. [自分用サーバーで実行](#自分用サーバーで実行)
-            10. [次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新](#次のバージョンのチケットを整理ロードマップを作成バージョン情報を更新)
+            10. [プロジェクト・レポートを公開](#プロジェクト・レポートを公開)
+            11. [次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新](#次のバージョンのチケットを整理ロードマップを作成バージョン情報を更新)
     4. [v0.1.0 - v1.0.0、最低限の機能をなるべく早くリリース](#v010---v100最低限の機能をなるべく早くリリース)
     5. [v1.0.0以降、機能を少しずつリリース](#v100以降機能を少しずつリリース)
     6. [おわりに](#おわりに)
@@ -635,8 +636,10 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
         - GitHub release
         - license
         - Docker Stars
+        - プロジェクト・レポート
         - __TODO:__ SonarQube Coverage
         - __TODO:__ SonarQube Tech Debt
+    - この時点ではまだ存在しないURLもありますが、当READMEを参考にとりあえず作っておきます
 - 提供機能
 - ビルド方法
 - 使用方法
@@ -668,6 +671,27 @@ GitHub releaseに該当バージョンを作成して、CHANGELOGの内容をコ
 ##### 自分用サーバーで実行
 
 Travis CIでビルドが完了してDocker Hubにアップロードされたら、自分用サーバーで実行します。動作確認を行い、問題がないことを確認します。
+
+##### プロジェクト・レポートを公開
+
+__TODO:__ GitタグのCIビルド時にプロジェクト・レポートを生成、公開するように実装します。
+
+プロジェクト・レポートを生成、公開します。
+
+```
+$ ./mvnw clean site
+```
+
+生成したプロジェクト・レポートは、別のフォルダにコピーして退避します。
+
+`gh-pages`ブランチをチェックアウトします。存在しない場合、作成します。
+
+```
+$ git checkout --orphan gh-pages
+$ git reset --hard
+```
+
+プロジェクト・レポートを`gh-pages`ブランチにコミットします。これで、GitHub Pagesで公開されます。
 
 ##### 次のバージョンのチケットを整理、ロードマップを作成、バージョン情報を更新
 
