@@ -1,0 +1,9 @@
+FROM openjdk:8-alpine
+LABEL maintainer="u6k.apps@gmail.com"
+
+VOLUME /var/my-app
+WORKDIR /var/my-app
+
+EXPOSE 8080
+
+CMD ["sh"]
