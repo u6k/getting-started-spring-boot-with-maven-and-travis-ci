@@ -100,7 +100,7 @@ Spring Boot with Mavenプロジェクトを開始する手順を説明します�
 
 - [わかりやすい README 駆動開発 - Qiita](https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b)
 
-> __TODO:__ READMEテンプレートを自分用に修正します。
+__TODO:__ READMEテンプレートを自分用に修正します。
 
 Gistでは、次のテンプレートが人気のようです。
 
@@ -338,7 +338,7 @@ logging.level.me.u6k=DEBUG
 
 DBを使用しない場合は、DB接続設定は不要です。JDBC URLに`APP_DB_PATH`環境変数またはデフォルト値として`./target/db/my-app`を設定しています。これは、開発時は`./target/db/my-app`にDBデータを出力して、実行時は`APP_DB_PATH`環境変数で設定したパスにDBデータを出力するためです。
 
-> __TODO:__ プロファイルで管理すべき
+__TODO:__ プロファイルで管理すべき
 
 info設定は、Spring Boot Actuatorによって有効になる`/info`エンドポイントで情報を出力するための設定です。この場合、`pom.xml`で定義したバージョン情報を出力します。
 
@@ -511,8 +511,9 @@ $ docker run \
 - テスト、メトリクスのレポートをアップロード
 - 上記の結果をSlack通知
 
-> __TODO:__ 「E2Eテスト」「レポートをアップロード」が実装できていません。
-> __TODO:__ Docker multi stage buildにおいて、依存ライブラリのキャッシュを再利用することができません。このため、Dockerイメージのビルドに時間がかかります。
+__TODO:__ 「E2Eテスト」「レポートをアップロード」が実装できていません。
+
+__TODO:__ Docker multi stage buildにおいて、依存ライブラリのキャッシュを再利用することができません。このため、Dockerイメージのビルドに時間がかかります。
 
 CIサービスは、Travis CI、Circle CI、wercker、Jenkinsなどがありますが、ここではTravis CIを利用します。Circle CIは2.0になってハマりどころが増え、werckerは知見が少なく、Jenkinsは(基本的に)オンプレミスなので。Travis CIのサインアップや基本的な利用方法は、ここでは説明しません。
 
@@ -581,7 +582,7 @@ script:
 
 Dockerイメージをビルドします。
 
-> __TODO:__ ユニット・テスト、E2Eテスト、レポーティングを実装します。
+__TODO:__ ユニット・テスト、E2Eテスト、レポーティングを実装します。
 
 ```
 after_success:
