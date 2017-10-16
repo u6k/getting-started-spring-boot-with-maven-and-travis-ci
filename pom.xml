@@ -4,13 +4,13 @@
 
     <groupId>me.u6k.template</groupId>
     <artifactId>my-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>my-app</name>
     <description>自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。</description>
     <inceptionYear>2017</inceptionYear>
-    <url>https://github.com/u6k/template-spring-boot/</url>
+    <url>https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/</url>
 
     <organization>
         <name>u6k Apps</name>
@@ -89,31 +89,31 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/u6k/template-spring-boot/issues</url>
+        <url>https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/u6k/template-spring-boot</url>
+        <url>https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci</url>
     </ciManagement>
 
     <distributionManagement>
         <site>
             <id>github-releases</id>
             <name>GitHub</name>
-            <url>https://github.com/u6k/template-spring-boot/releases</url>
+            <url>https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases</url>
         </site>
     </distributionManagement>
 
     <licenses>
         <license>
             <name>MIT License</name>
-            <url>https://raw.githubusercontent.com/u6k/template-spring-boot/master/LICENSE</url>
+            <url>https://raw.githubusercontent.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/master/LICENSE</url>
         </license>
     </licenses>
 
     <scm>
-        <url>https://github.com/u6k/template-spring-boot/</url>
+        <url>https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/</url>
     </scm>
 
     <reporting>
