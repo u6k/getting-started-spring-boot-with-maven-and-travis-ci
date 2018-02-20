@@ -1,16 +1,25 @@
-# Getting started Spring Boot with Maven and Travis CI
+# Getting started Spring Boot with Maven and Travis CI _(getting-started-spring-boot-with-maven-and-travis-ci)_
 
-[![Travis](https://img.shields.io/travis/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci) [![GitHub release](https://img.shields.io/github/release/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases) [![license](https://img.shields.io/github/license/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/blob/master/LICENSE) [![Docker Stars](https://img.shields.io/docker/stars/u6kapps/my-app.svg)](https://hub.docker.com/r/u6kapps/my-app/) [![project-reports](https://img.shields.io/badge/site-project--reports-orange.svg)](https://u6k.github.io/getting-started-spring-boot-with-maven-and-travis-ci/project-reports.html)
+[![Travis](https://img.shields.io/travis/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://travis-ci.org/u6k/getting-started-spring-boot-with-maven-and-travis-ci)
+[![GitHub release](https://img.shields.io/github/release/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/releases)
+[![license](https://img.shields.io/github/license/u6k/getting-started-spring-boot-with-maven-and-travis-ci.svg)](https://github.com/u6k/getting-started-spring-boot-with-maven-and-travis-ci/blob/master/LICENSE)
+[![Docker Stars](https://img.shields.io/docker/stars/u6kapps/my-app.svg)](https://hub.docker.com/r/u6kapps/my-app/)
+[![project-reports](https://img.shields.io/badge/site-project--reports-orange.svg)](https://u6k.github.io/getting-started-spring-boot-with-maven-and-travis-ci/project-reports.html)
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。
+> 自分流のSpring Boot with Mavenプロジェクトを開始する手順を説明します。また、テンプレートを提供します。
 
-## Table of Contents
+__Table of Contents__
 
 <!-- TOC depthFrom:2 orderedList:true -->
 
-1. [Table of Contents](#table-of-contents)
-2. [Requirement](#requirement)
-3. [Steps](#steps)
+1. [Background](#background)
+2. [Install](#install)
+    1. [Requirements](#requirements)
+    2. [Installation](#installation)
+3. [Usage](#usage)
+4. [API](#api)
+5. [Steps](#steps)
     1. [やりたいことをREADMEに書く](#やりたいことをreadmeに書く)
     2. [GitHubにリポジトリを作成する](#githubにリポジトリを作成する)
     3. [v0.0.1、起動するだけのアプリケーションと開発環境を構築](#v001起動するだけのアプリケーションと開発環境を構築)
@@ -39,21 +48,24 @@
     4. [v0.1.0 - v1.0.0、最低限の機能をなるべく早くリリース](#v010---v100最低限の機能をなるべく早くリリース)
     5. [v1.0.0以降、機能を少しずつリリース](#v100以降機能を少しずつリリース)
     6. [おわりに](#おわりに)
-4. [Author](#author)
-5. [License](#license)
+6. [Maintainer](#maintainer)
+7. [Contribute](#contribute)
+    1. [Requirements](#requirements-1)
+8. [License](#license)
 
 <!-- /TOC -->
 
-## Requirement
+## Background
 
-- Java SDK 8
+さくさく自分のアプリケーションを構築したいとは思いますが、Webアプリケーションは複雑です。同じようなアーキテクチャのアプリケーションを簡単に構築するために、その手順とテンプレートがほしいと考えました。
 
-```
-$ java -version
-java version "1.8.0_144"
-Java(TM) SE Runtime Environment (build 1.8.0_144-b01)
-Java HotSpot(TM) 64-Bit Server VM (build 25.144-b01, mixed mode)
-```
+このプロジェクトは、標準的なWebアプリケーションを簡単にスタートアップすることを目標とします。
+
+## Install
+
+### Requirements
+
+Dockerイメージとして配布しているため、Dockerが必要です。
 
 - Docker
 
@@ -77,14 +89,23 @@ Server:
  Experimental: false
 ```
 
-- Travis CI
-    - CIを使わない場合、該当手順を読み飛ばしてください。
-- GitHub、git-flow
-    - リポジトリにはGitHub、ブランチ管理はgit-flowで行います。他のリポジトリやブランチ管理を行う場合は、適宜読み替えてください。
-- Docker Hub
-    - DockerイメージをDocker Hubで管理します。他のDockerリポジトリを使用する場合は、適宜読み替えてください。
-- 自分用サーバー
-    - Dockerコンテナが動作するサーバーを用意します。ご利用のクラウド・サービスに読み替えるか、アプリケーションを公開しない場合は読み飛ばしてください。
+### Installation
+
+Docker HubからDockerイメージをpullして実行します。
+
+```
+$ docker pull u6kapps/my-app
+$ docker run -d -p 8080:8080 u6kapps/my-app
+```
+
+## Usage
+
+- TODO: 画面の操作説明より、起動後に使用を始める方法や運用手順を説明すること。
+- TODO: バッチ処理を提供している場合、実行方法を説明すること。
+
+## API
+
+- TODO: WebAPIを提供する場合、`curl`コマンドのサンプルを説明すること。
 
 ## Steps
 
@@ -97,15 +118,9 @@ Spring Boot with Mavenプロジェクトを開始する手順を説明します�
 - [Readme Driven Development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html)
 - [Readme駆動開発を和訳してみた - Qiita](https://qiita.com/syossan27/items/38e2f4b7f0dc74207dc9)
 
-筆者は、次のREADMEテンプレートを好んで使っています。
+READMEはstandard-readmeに準拠すべきです。
 
-- [わかりやすい README 駆動開発 - Qiita](https://qiita.com/b4b4r07/items/c80d53db9a0fd59086ec#_reference-b44ebe2d406688f9bd3b)
-
-__TODO:__ READMEテンプレートを自分用に修正します。
-
-Gistでは、次のテンプレートが人気のようです。
-
-- [A template to make good README.md](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
+- [RichardLitt/standard-readme: Standard Readme Style](https://github.com/RichardLitt/standard-readme)
 
 ### GitHubにリポジトリを作成する
 
@@ -637,6 +652,7 @@ $ docker run --rm -v $(pwd):/project skandyla/travis-cli encrypt "xxx" --add not
         - license
         - Docker Stars
         - プロジェクト・レポート
+        - standard-readme
         - __TODO:__ SonarQube Coverage
         - __TODO:__ SonarQube Tech Debt
     - この時点ではまだ存在しないURLもありますが、当READMEを参考にとりあえず作っておきます
@@ -709,6 +725,8 @@ v0.0.1以降は、機能を少しずつ実装していきます。ただ、な�
 - リファレンスは不要。
 - 未実装のFeatureはTODOに書く。
 - 互換性は意識しない。
+- フロントエンドはBootstrapで良い。
+    - LayoutIt! - Interface Builder for Bootstrap http://www.layoutit.com/
 
 自分が日常的に使えるレベルの機能が実装できたら、それをv1.0.0としてリリースします。
 
@@ -731,11 +749,59 @@ v1.0.0以降は、広く使ってもらうために機能を慎重に実装し�
 
 手順が長い…もっとサクッとプロジェクトを開始して、サクッと実行できるようにしたいです。Dokkuとかかなぁ。
 
-## Author
+## Maintainer
 
 - [u6k.Blog()](https://blog.u6k.me/)
 - [u6k - GitHub](https://github.com/u6k)
 - [u6k_yu1 | Twitter](https://twitter.com/u6k_yu1)
+
+## Contribute
+
+貴重なアイデアをご提案頂ける場合は、Issueを書いていただけると幸いです。あなたは、このプロジェクトに参加することによって、[Open Source Code of Conduct - thoughtbot](https://thoughtbot.com/open-source-code-of-conduct)を遵守することに同意します。
+
+### Requirements
+
+このプロジェクトは、次のソフトウェアやサービスに依存しています。
+
+- Java SDK 8
+
+```
+$ java -version
+java version "1.8.0_144"
+Java(TM) SE Runtime Environment (build 1.8.0_144-b01)
+Java HotSpot(TM) 64-Bit Server VM (build 25.144-b01, mixed mode)
+```
+
+- Docker
+
+```
+$ docker version
+Client:
+ Version:      17.03.1-ce
+ API version:  1.27
+ Go version:   go1.7.5
+ Git commit:   c6d412e
+ Built:        Tue Mar 28 00:40:02 2017
+ OS/Arch:      windows/amd64
+
+Server:
+ Version:      17.06.2-ce
+ API version:  1.30 (minimum version 1.12)
+ Go version:   go1.8.3
+ Git commit:   cec0b72
+ Built:        Tue Sep  5 19:59:19 2017
+ OS/Arch:      linux/amd64
+ Experimental: false
+```
+
+- Travis CI
+    - CIを使わない場合、該当手順を読み飛ばしてください。
+- GitHub、git-flow
+    - リポジトリにはGitHub、ブランチ管理はgit-flowで行います。他のリポジトリやブランチ管理を行う場合は、適宜読み替えてください。
+- Docker Hub
+    - DockerイメージをDocker Hubで管理します。他のDockerリポジトリを使用する場合は、適宜読み替えてください。
+- 自分用サーバー
+    - Dockerコンテナが動作するサーバーを用意します。ご利用のクラウド・サービスに読み替えるか、アプリケーションを公開しない場合は読み飛ばしてください。
 
 ## License
 
